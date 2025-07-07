@@ -92,9 +92,6 @@ SRA_FILE="data/bear_sex_season_sra.tsv"
 
 #call line in file we're processing
 LINE=$(sed -n "${SLURM_ARRAY_TASK_ID}p" "$SRA_FILE")
-bear_name=$(echo ${LINE} | awk '{ print $1; }')
-sex=$(echo ${LINE} | awk '{ print $2; }')
-seasons=$(echo ${LINE} | awk '{ print $3; }')
 sra=$(echo ${LINE} | awk '{ print $4; }')
 
 #print out which sample is being run
@@ -106,11 +103,10 @@ prefetch ${sra} --output-directory data/sra_data
 echo "Downloading fastq files"
 
 #using fasterq-dump to convert .sra to .fastq
-#The parameters used here are:
-# --outdir: specifies the output directory for the fastq files
-# --threads: specifies the number of threads to use for the conversion
-# --temp: specifies the temporary directory to use during the conversion
-# --progress: shows the progress of the conversion
 fasterq-dump data/sra_data/${sra}/${sra}.sra --outdir data/fastq_files --threads 4 --temp data/tmp --progress
 ```
+My Slurm header features two additional parameters, one for memory and another for an array job. Usually, for lower memory-intensive jobs like this one, it's okay to leave the SBATCH memory line out, but for jobs that need more procesisng power (as seen later on in this pipeline), it's necessary to specify the amount of memory one wants to allocate. I also use an array job for this Slurm script as instead of designing 11 different Slurm scripts each for a tailored SRA number, I used a column variable with all 11 SRA numbers and use an array to iterate through each one.
 
+I loaded the `sratoolkit` module that the Slurm script needs in order to run `prefetch` and `fasterq-dump` and then made some directories to store all the .sra and .fastq files in. Depending on whether you want to make an array job or not, you'd need to store your data object (for me, it was a .tsv file) containing your SRA numbers and then extract the column with those SRA numbers. To store the data object, I made a variable called `SRA_FILE` containing my .tsv file with SRA numbers, and then used `sed` to create a variable called `LINE` that stores a particular line of my .tsv file, which will then be used in one of the eleven arrays in this job. I then intialized a variable called `sra` to the fourth column of the `LINE` variable, which stores the SRA numbers.
+
+The echo line isn't necessary, but I found it to be helpful to as a debugging tool when I got an error in my output logs. 
