@@ -47,5 +47,70 @@ Below is an example of a Slurm script header at the top of a .slurm file:
 ```
 
 In this step of the pipeline, we will be loading the *sratoolkit* module via our SLURM script. Additionally, using a SLURM script will allow us to use two tools derived from the sratoolkit package to utilize SRA and FASTQ files.
-### prefetch
+### `prefetch`
+The `prefetch` tool in our `sratoolkit` module allows one to download the raw .sra files from NCBI, though they aren't readble yet. The syntax for `prefetch` in our Slurm script mirrors the following code:
+```
+prefetch sra# --output-directory desired/directory
+```
+`prefetch` mainly needs two parameters, the first being an SRA#  and the second being a desired path to a directory to produce an output .sra file in.
+### `fasterq-dump`
+The `fasterq-dump` tool in the `sratoolkit` module enables users to extract data in FASTQ or FASTA-format from SRA-accessions. To utilize  `fasterq-dump`, refer to the following code:
+```
+fasterq-dump path/to/sra/file --outdir desired/directory --threads n --temp temporary/directory --progress
+```
+The above code segment needs a path to the sra file that will be converted and a path to a directory to store the outputted .fastq files. Other parameters aren't necessary but will be covered in the following sections.
+
+## Implementation
+On my HPC (Hummingbird), I used the following Slurm script to run `prefetch` and `fasterq-dump`.
+```
+#!/bin/bash
+
+#SBATCH --job-name=getSRA    			# Job name
+#SBATCH --partition=128x24				# Partition name
+#SBATCH --mail-type=ALL               		# Mail events (NONE, BEGIN, END, FAIL, ALL)
+#SBATCH --mail-user=svoora@ucsc.edu   	# Where to send mail
+#SBATCH --time=0-05:00:00 				# Wall clock time limit in Days-Hours:min:seconds
+#SBATCH --ntasks=1                    		# Run a single task
+#SBATCH --cpus-per-task=4                  	# Use 4 threads for fasterq-dump
+#SBATCH --output=scripts/logs/fasterq-dump_%j.out    # Standard output and error log
+#SBATCH --error=scripts/logs/fasterq-dump_%j.err     # Standard output and error log
+#SBATCH --mem=8G                    		# Allocate memory for the job.
+#SBATCH --array=1-11					# array job
+
+# moves to working directory
+cd /hb/groups/sip_eeb_01/saat || exit 1
+
+#downloading any tools/modules
+module load sratoolkit
+
+#creates directory to store data
+# and subdirectories for sra data, fastq files, and temp files
+mkdir -p data/sra_data data/fastq-files data/tmp
+
+#file with SRA info
+SRA_FILE="data/bear_sex_season_sra.tsv"
+
+#call line in file we're processing
+LINE=$(sed -n "${SLURM_ARRAY_TASK_ID}p" "$SRA_FILE")
+bear_name=$(echo ${LINE} | awk '{ print $1; }')
+sex=$(echo ${LINE} | awk '{ print $2; }')
+seasons=$(echo ${LINE} | awk '{ print $3; }')
+sra=$(echo ${LINE} | awk '{ print $4; }')
+
+#print out which sample is being run
+echo "downloading sra sample:${sra} ${sex} ${seasons} for bear: ${bear_name}"
+
+#using prfetch to download SRA data
+prefetch ${sra} --output-directory data/sra_data
+
+echo "Downloading fastq files"
+
+#using fasterq-dump to convert .sra to .fastq
+#The parameters used here are:
+# --outdir: specifies the output directory for the fastq files
+# --threads: specifies the number of threads to use for the conversion
+# --temp: specifies the temporary directory to use during the conversion
+# --progress: shows the progress of the conversion
+fasterq-dump data/sra_data/${sra}/${sra}.sra --outdir data/fastq_files --threads 4 --temp data/tmp --progress
+```
 
