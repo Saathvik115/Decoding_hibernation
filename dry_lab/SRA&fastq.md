@@ -21,7 +21,7 @@ The bears in this project all have a corresponding SRA number generated from a P
 ## Methods
 All steps in this bioinformatics pipeline mainly utilize a **Slurm script**. Slurm scripts (file_name.slurm) are used to submit and manage jobs in a high-performance computing (HPC) environment that uses the Slurm workload manager. Slurm is a popular open-source resource management and job scheduling application used on many HPC clusters and supercomputers (e.g. Hummingbird for UCSC) due to its ability to allocate/manage resources on HPC environments.
 Below is an example of a Slurm script header at the top of a .slurm file:
-```
+```bash
 #!/bin/bash
 #SBATCH --job-name=my_job_name        # Job name
 #SBATCH --output=output.txt           # Standard output file
@@ -62,7 +62,7 @@ The above code segment needs a path to the sra file that will be converted and a
 
 ## Implementation
 On my HPC (Hummingbird), I used the following Slurm script to run `prefetch` and `fasterq-dump`.
-```
+```bash
 #!/bin/bash
 
 #SBATCH --job-name=getSRA    			# Job name
