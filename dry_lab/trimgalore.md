@@ -84,9 +84,9 @@ My Slurm header includes several important parameters for this trimming workflow
 
 I loaded the `trimgalore` module, which provides access to both Trim Galore and its dependencies (Cutadapt and FastQC) in the HPC environment. The script then creates a well-organized directory structure with `analysis/1_trim/` as the main output directory for trimmed files and `analysis/1_trim/fastqc/` as a dedicated subdirectory for FastQC reports.
 
-**Input File Management:** Similar to the SRA workflow, I used a TSV file (`fastq_names.tsv`) containing the names of paired FASTQ files. The script extracts the appropriate R1 and R2 file names for each array job using `sed` and `awk`. I then initialized variables `read1` and `read2` to store the first and second columns of the line, which contain the paired FASTQ file names.
+Similar to the SRA workflow, I used a TSV file (`fastq_names.tsv`) containing the names of paired FASTQ files. The script extracts the appropriate R1 and R2 file names for each array job using `sed` and `awk`. I then initialized variables `read1` and `read2` to store the first and second columns of the line, which contain the paired FASTQ file names.
 
-**Command Breakdown:** The main `trim_galore` command includes several critical parameters:
+**Trim Galore Paramaters** The main `trim_galore` command includes several critical parameters:
 
 - `--paired`: Indicates paired-end reads, ensuring both R1 and R2 files are processed together and remain synchronized
 - `-q 24`: Sets the quality score threshold. A Phred score of 24 corresponds to 99.6% base call accuracy, providing stringent quality filtering
