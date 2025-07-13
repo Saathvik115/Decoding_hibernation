@@ -108,5 +108,10 @@ This three-step pipeline transforms raw RNA-seq data into a quantified gene expr
 
 The workflow is designed for scalability using Slurm array jobs, processing 11 brown bear samples in parallel across high-performance computing resources. Each step generates comprehensive output files and logs for quality assessment and troubleshooting. Below is a figure that visualizes the processing workflow used in this project.
 
+<img width="930" height="517" alt="workflowimage" src="https://github.com/user-attachments/assets/a80957a2-5497-429a-ae66-218e08c8ae2f" />
 
 ## File Structure
+
+Obviously, directories can have any structure so long as are able to store the results of each of these steps. I've attached an image below depicting my file structure:
+
+<img width="194" height="413" alt="structureimage" src="https://github.com/user-attachments/assets/6a3058fa-e5b1-4729-9344-a37fab968f5a" />
