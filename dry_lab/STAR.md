@@ -19,7 +19,7 @@ After quality trimming with tools like Trim Galore, the next critical step in RN
 - Variant calling from RNA-seq data
 - Fusion gene detection
 
-The bears in this project all have corresponding trimmed FASTQ files from the previous quality control step. These files will be aligned to the brown bear (*Ursus arctos*) reference genome using STAR's two-step workflo.
+The bears in this project all have corresponding trimmed FASTQ files from the previous quality control step. These files will be aligned to the brown bear (*Ursus arctos*) reference genome using STAR's two-step workflow.
 ## Methods
 
 All steps in this alignment pipeline utilize **Slurm scripts** for execution on high-performance computing environments. As described in previous workflows, Slurm scripts enable efficient resource management and job scheduling on HPC clusters (see SRA&FASTQ.md to get started with SLurm scripts).
